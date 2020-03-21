@@ -1,0 +1,44 @@
+<html>
+
+<head></head>
+
+<body>
+    <input type="text" id="text"/>
+    <button id="send">发送</button>
+    <ul id="messagesList"></ul>
+</body>
+
+</html>
+<script src="E://studyspace/cy.webchat/Cy.WeChat/Cy.WeChar.Brower/node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+<script>
+    setTimeout(() => {
+        const userId = Date.now()
+        const url = `https://localhost:5001/notify?groupId=123456&userId=${userId}&ip=127.0.0.1`
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(url)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.start().then(function () {
+            console.log("connected");
+        });
+
+        connection.on("ReceiveMessage", (message) => {
+            const encodedMsg = message.from + " says " + message.content;
+            const li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        connection.on("ReceiveConnection", (message) => {
+            console.log('MESSAGE',message);
+            
+        });
+
+        const btn=document.getElementById("send")        
+        btn.addEventListener('click',function(){            
+            const target=document.getElementById('text')
+            connection.invoke("SendMessage", userId.toString(),'123456',target.value).catch(err => console.error(err.toString()));
+        })
+    }, 2000);
+</script>
