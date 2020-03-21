@@ -1,0 +1,1 @@
+{"version":3,"file":"EmptyNodeHttpClient.js","sourceRoot":"","sources":["EmptyNodeHttpClient.ts"],"names":[],"mappings":";AAAA,sDAAsD;AACtD,+GAA+G;;AAE/G,mIAAmI;AAEnI,6CAAwD;AAGxD,eAAe;AACf,MAAa,cAAe,SAAQ,uBAAU;IAC1C,4EAA4E;IAC5E,YAAmB,MAAe;QAC9B,KAAK,EAAE,CAAC;IACZ,CAAC;IAEM,IAAI;QACP,OAAO,OAAO,CAAC,MAAM,CAAC,IAAI,KAAK,CAAC,iIAAiI,CAAC,CAAC,CAAC;IACxK,CAAC;CACJ;AATD,wCASC"}

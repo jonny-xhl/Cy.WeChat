@@ -1,0 +1,81 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<style type="text/css">
+    .content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: left;
+        border: solid #4cff00 1px;
+        margin-top:2rem;
+    }
+</style>
+<div class="text-center">
+    <div class="container">
+        <textarea rows="3" id="text" cols="120" class="text" placeholder="输入要发送的文字信息"></textarea>
+        <button id="send" class="btn btn-primary">发送</button>
+        <div class="content">
+            <ul id="messagesList" class="list-group-item-primary">
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script type="text/javascript">
+    window.onload = function () {
+        const userid = this.prompt('请输入你的名字')
+        // 为后期做扩展
+        const user = {
+            userId: userid,
+            groupName: 'cygroup',
+            ip: '127.0.0.1'
+        }
+        if (user.userId) {
+            setTimeout(() => {
+                const url = `https://localhost:5001/notify?groupId=${user.groupName}&userId=${user.userId}&ip=${user.ip}`
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl(url)
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+
+                connection.start().then(function () {
+                    appendContent(`${user.userId}登录成功......`);
+                });
+
+                connection.on("ReceiveMessage", (message) => {
+                    console.log('ReceiveMessage-MESSAGE', message);
+                    const encodedMsg = message.from + " says " + message.content;
+                    appendContent(encodedMsg);
+                });
+
+                connection.on("ReceiveConnection", (message) => {                    
+                    console.log('ReceiveConnection-MESSAGE', message);
+                    appendContent(message.content);
+                });
+                connection.on("ReceiveDisConnection", (message) => {                    
+                    console.log('ReceiveDisConnection-MESSAGE', message);
+                    appendContent(message.content);
+                });
+
+                const btn = document.getElementById("send")
+                btn.addEventListener('click', function () {
+                    const target = document.getElementById('text')
+                    connection.invoke("SendMessage", user.userId, user.groupName, target.value)
+                        .then(_ => {
+                            target.value = '';
+                        })
+                        .catch(err => console.error(err.toString()));
+                })
+            }, 2000);
+        }
+    }
+
+    function appendContent(content) {
+        const li = document.createElement("li");
+        li.textContent = content;
+        document.getElementById("messagesList").appendChild(li);
+    }
+</script>
