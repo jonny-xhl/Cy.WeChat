@@ -9,7 +9,11 @@ namespace Cy.WeChat.Hosting
     public interface IClient
     {
         Task ReceiveMessage(MessageBody message);
-        Task ReceiveConnection(ConnectionMessageContent message);
+        Task ReceiveConnection(MessageBody message);
         Task ReceiveDisConnection(MessageBody message);
+        Task ReceiveSendToGroup(MessageBody msg);
+        Task ReceiveSendToGroups(MessageBody msg);
+        Task ReceiveSendToUser(MessageBody msg);
+        Task ReceiveSendToUsers(MessageBody msg);
     }
 }

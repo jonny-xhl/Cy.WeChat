@@ -12,17 +12,23 @@
         border: solid #4cff00 1px;
         margin-top:2rem;
     }
+    .badge{
+        font-size:large;
+        font-weight:bolder;
+        color:aquamarine;
+    }
+    #messagesList {
+        width: 100%;
+    }
 </style>
-<div class="text-center">
     <div class="container">
         <textarea rows="3" id="text" cols="120" class="text" placeholder="输入要发送的文字信息"></textarea>
         <button id="send" class="btn btn-primary">发送</button>
         <div class="content">
-            <ul id="messagesList" class="list-group-item-primary">
+            <ul id="messagesList" class="list-group">
             </ul>
         </div>
     </div>
-</div>
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script type="text/javascript">
     window.onload = function () {
@@ -46,9 +52,8 @@
                 });
 
                 connection.on("ReceiveMessage", (message) => {
-                    console.log('ReceiveMessage-MESSAGE', message);
-                    const encodedMsg = message.from + " says " + message.content;
-                    appendContent(encodedMsg);
+                    console.log('ReceiveMessage-MESSAGE', message);                    
+                    appendContent(message.content, message.from);
                 });
 
                 connection.on("ReceiveConnection", (message) => {                    
@@ -73,9 +78,16 @@
         }
     }
 
-    function appendContent(content) {
-        const li = document.createElement("li");
-        li.textContent = content;
+    function appendContent(content, badge) {
+        let li = document.createElement("li");
+        li.className = 'list-group-item';        
+        if (badge) {
+            const span = document.createElement('span');
+            span.className = 'badge';
+            span.innerText = badge+':';
+            li.appendChild(span);
+        }
+        li.innerHTML += content;
         document.getElementById("messagesList").appendChild(li);
     }
 </script>

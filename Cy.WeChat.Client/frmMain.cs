@@ -70,7 +70,11 @@ namespace Cy.WeChat.Client
                 Invoke(new Action(() =>
                 {
                     this.rbxCotent.AppendText(message.Content);
-                    this.listView1.Items.Add(message.From);
+                    this.listView1.Items.Add(new ListViewItem()
+                    {
+                        Text=message.From,
+                        Name=message.From                        
+                    });
                 }));
             });
             // 下线

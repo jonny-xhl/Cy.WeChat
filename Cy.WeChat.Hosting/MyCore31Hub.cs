@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cy.WeChat.Hosting
 {
-    internal class MyCore31Hub : Hub<IClient>
+    internal class MyCore31Hub : Hub<IClient>, IMyCore31ConnectionHub, ISuppertToClientInvoke
     {
         static IDictionary<string, ClientInfo> _clients;
         static MyCore31Hub()
@@ -34,7 +34,7 @@ namespace Cy.WeChat.Hosting
                     GroupId = groupid,
                     UserId = userId,
                     Ip = ip
-                });                
+                });
                 await Groups.AddToGroupAsync(connid, groupid);
                 await SendConnection(groupid, new ConnectionMessageContent
                 {
@@ -55,7 +55,7 @@ namespace Cy.WeChat.Hosting
                 await Groups.RemoveFromGroupAsync(connid, client.GroupId);
                 await SendDisConnection(client.GroupId, new DisConnectionMessageContent
                 {
-                    From=client.UserId,
+                    From = client.UserId,
                     TransferCode = "下线",
                     LocalServerCode = "DisConnection",
                     Content = $"{client.UserId}下线啦！！！"
@@ -63,7 +63,7 @@ namespace Cy.WeChat.Hosting
             }
         }
 
-        public async Task SendMessage(string from,string groupName, string msg)
+        public async Task SendMessage(string from, string groupName, string msg)
         {
             await Clients.Group(groupName).ReceiveMessage(new UserMessageContent
             {
@@ -72,12 +72,12 @@ namespace Cy.WeChat.Hosting
             });
         }
 
-        async Task SendConnection(string groupName, ConnectionMessageContent msg)
+        public async Task SendConnection(string groupName, ConnectionMessageContent msg)
         {
             await Clients.Group(groupName).ReceiveConnection(msg);
         }
 
-        async Task SendDisConnection(string groupName, DisConnectionMessageContent msg)
+        public async Task SendDisConnection(string groupName, DisConnectionMessageContent msg)
         {
             await Clients.Group(groupName).ReceiveDisConnection(msg);
         }
@@ -89,6 +89,26 @@ namespace Cy.WeChat.Hosting
                 return client;
             }
             return default(ClientInfo);
+        }
+
+        public async Task SendToGroup(UserMessageContent msg, string groupName)
+        {
+            await Clients.Group(groupName).ReceiveSendToGroup(msg);
+        }
+
+        public async Task SendToGroups(UserMessageContent msg, params string[] groups)
+        {
+            await Clients.Groups(groups.ToList().AsReadOnly()).ReceiveSendToGroups(msg);
+        }
+
+        public async Task SendToUser(UserMessageContent msg, string userId)
+        {
+            await Clients.User(userId).ReceiveSendToUser(msg);
+        }
+
+        public async Task SendToUsers(UserMessageContent msg, params string[] users)
+        {
+            await Clients.Users(users.ToList().AsReadOnly()).ReceiveSendToUsers(msg);
         }
     }
 }
