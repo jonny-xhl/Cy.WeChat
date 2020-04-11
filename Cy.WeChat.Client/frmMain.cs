@@ -9,12 +9,14 @@ using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Extensions.Configuration.Xml;
 
 namespace Cy.WeChat.Client
 {
     public partial class frmMain : Form
     {
-        static string url = "https://localhost:5001/notify";
+       
+        static string url = Program.Configuration["appSettings:add:value"];
         string groupId = "123456";
         string userId = "";
         string ip = "127.0.0.1";
