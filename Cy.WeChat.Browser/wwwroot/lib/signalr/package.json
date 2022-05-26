@@ -52,7 +52,7 @@
     "es6-promise": "^4.2.2"
   },
   "dependencies": {
-    "eventsource": "^1.0.7",
+    "eventsource": "^2.0.2",
     "request": "^2.88.0",
     "ws": "^7.4.6"
   }
